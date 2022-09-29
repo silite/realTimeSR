@@ -5,13 +5,18 @@
  * 
  * https://www.electronjs.org/docs/latest/tutorial/sandbox
  */
-window.addEventListener('DOMContentLoaded', () => {
-  const replaceText = (selector, text) => {
-    const element = document.getElementById(selector)
-    if (element) element.innerText = text
-  }
+const { contextBridge, ipcRenderer } = require('electron')
 
-  for (const type of ['chrome', 'node', 'electron']) {
-    replaceText(`${type}-version`, process.versions[type])
+let backupMsg = ''
+
+contextBridge.exposeInMainWorld('electronAPI', {
+  sendMsg: (msg = "") => {
+    let res = msg
+    if (msg.length) backupMsg = res
+    else res = backupMsg
+    document.querySelector('#main').innerHTML = res
+    ipcRenderer.send('sendMsg', res)
   }
+})
+window.addEventListener('DOMContentLoaded', () => {
 })

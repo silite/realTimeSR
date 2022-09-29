@@ -1,0 +1,10 @@
+/* styles.css */
+body {
+  background-color: transparent;
+  padding: 0;
+  margin: 0;
+}
+#main {
+  height: 100vh;
+}
+/* Add styles here to customize the appearance of your app */

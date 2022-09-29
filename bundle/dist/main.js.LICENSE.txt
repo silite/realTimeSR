@@ -1,0 +1,7 @@
+/*
+ * [js-sha1]
+ *
+ * @version 0.6.0
+ * @copyright H, J-C 2018-9-28
+ * @license MIT
+ */

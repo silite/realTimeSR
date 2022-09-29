@@ -3,17 +3,15 @@
   <head>
     <meta charset="UTF-8">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
-    <link href="./styles.css" rel="stylesheet">
-    <title>Hello World!</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'self' blob:; script-src 'self' blob:; style-src 'self' 'unsafe-inline'">
+    <link rel="shortcut icon" type="image/x-icon" href="./asset/favicon.ico" />
+    <link href="./style/styles.css" rel="stylesheet">
+    <title>实时字幕姬</title>
   </head>
   <body>
-    <h1>Hello World!</h1>
-    We are using Node.js <span id="node-version"></span>,
-    Chromium <span id="chrome-version"></span>,
-    and Electron <span id="electron-version"></span>.
-
+    <div id="main"></div>
     <!-- You can also require other files to run in this process -->
+    <script src="./bundle/dist/main.js"></script>
     <script src="./renderer.js"></script>
   </body>
 </html>

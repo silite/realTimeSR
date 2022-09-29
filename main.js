@@ -1,15 +1,69 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
+const { app, BrowserWindow, Menu, ipcMain } = require('electron')
+const express = require('express')
+const bodyParser = require('body-parser')
 const path = require('path')
+const ws = require('ws')
 
-function createWindow () {
+const expressApp = express()
+
+expressApp.use(bodyParser.urlencoded({ extended: false }))
+expressApp.use(bodyParser.json())
+
+expressApp.all('*', function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header("Access-Control-Allow-Headers", " Origin, X-Requested-With, Content-Type, Accept");
+  res.header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS')
+  res.header('X-Powered-By', ' 3.2.1')
+  next()
+})
+
+Menu.setApplicationMenu(null);
+
+expressApp.use('/', express.static(path.join(__dirname, './frontend')))
+
+let gatherSocket
+function startServer() {
+  const server = new ws.Server({
+    port: 11112,
+  });
+
+  server.on('connection', (socket, req) => {
+    console.log(socket, 'silite')
+    gatherSocket = socket
+
+    socket.on('close', () => {
+      // todo
+      gatherSocket?.send(JSON.stringify({ status: 'stop' }))
+    })
+
+    socket.on('error', (error) => {
+      console.log('123')
+      startServer()
+    })
+  })
+}
+
+function emitMsg(msg) {
+  gatherSocket?.send(msg)
+}
+
+function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 500,
+    height: 300,
+    // width: 1024,
+    // height: 768,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
-    }
+    },
+    icon: './asset/favicon.ico',
+    resizable: false,
+  })
+
+  ipcMain.on('sendMsg', (event, msg) => {
+    emitMsg(msg)
   })
 
   // and load the index.html of the app.
@@ -17,13 +71,18 @@ function createWindow () {
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
+
+  expressApp.listen('11111', () => {
+  })
 }
+
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   createWindow()
+  startServer()
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the

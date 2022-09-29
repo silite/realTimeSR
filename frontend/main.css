@@ -1,0 +1,22 @@
+@font-face {
+  font-family: 'zpix';
+  src: url('zpix.woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  font-family: zpix;
+  letter-spacing: 1px;
+  font-size: 20px;
+  padding: 0;
+  margin: 0;
+  width: 400px;
+  line-height: 30px;
+  height: 200px;
+  color: white;
+  text-shadow: 0 2px #ee929c, 2px 0 #ee929c, -2px 0 #ee929c, 0 -2px #ee929c;
+  text-align: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
