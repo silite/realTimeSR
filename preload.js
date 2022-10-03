@@ -7,16 +7,13 @@
  */
 const { contextBridge, ipcRenderer } = require('electron')
 
-let backupMsg = ''
-
 contextBridge.exposeInMainWorld('electronAPI', {
-  sendMsg: (msg = "") => {
-    let res = msg
-    if (msg.length) backupMsg = res
-    else res = backupMsg
-    document.querySelector('#main').innerHTML = res
-    ipcRenderer.send('sendMsg', res)
+  sendAudio: (audio) => {
+    ipcRenderer.send('sendAudio', audio)
   }
 })
 window.addEventListener('DOMContentLoaded', () => {
+  ipcRenderer.on('message', (e, msg) => {
+    document.title = msg || '-'
+  })
 })

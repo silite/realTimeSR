@@ -1,9 +1,10 @@
 // Modules to control application life and create native browser window
 const { app, BrowserWindow, Menu, ipcMain } = require('electron')
+const path = require('path')
+const ReconnectingWebSocket = require('reconnecting-websocket')
+const ws = require('ws')
 const express = require('express')
 const bodyParser = require('body-parser')
-const path = require('path')
-const ws = require('ws')
 
 const expressApp = express()
 
@@ -18,43 +19,72 @@ expressApp.all('*', function (req, res, next) {
   next()
 })
 
-Menu.setApplicationMenu(null);
-
 expressApp.use('/', express.static(path.join(__dirname, './frontend')))
 
+
+Menu.setApplicationMenu(null);
+
 let gatherSocket
-function startServer() {
+function startSocket() {
+  gatherSocket = new ReconnectingWebSocket('ws://212.129.237.61:12345', [], {
+    WebSocket: ws
+  })
+
+  gatherSocket.addEventListener('open', () => {
+    gatherSocket.send(JSON.stringify({
+      type: 'start'
+    }))
+  })
+
+  gatherSocket.addEventListener('message', (evt) => {
+    const msg = evt?.data
+    global.mainWindow.webContents.send('message', msg)
+    sendFrontSocket && sendFrontSocket.send(msg)
+  })
+
+  gatherSocket.addEventListener('error', () => {
+    startSocket()
+  })
+
+  gatherSocket.addEventListener('close', () => {
+    gatherSocket.send(JSON.stringify({
+      type: 'stop'
+    }))
+  })
+}
+
+let sendFrontSocket
+function startFrontServer() {
   const server = new ws.Server({
-    port: 11112,
-  });
+    port: 11112
+  })
 
   server.on('connection', (socket, req) => {
-    console.log(socket, 'silite')
-    gatherSocket = socket
+    sendFrontSocket = socket
 
     socket.on('close', () => {
-      // todo
-      gatherSocket?.send(JSON.stringify({ status: 'stop' }))
+      gatherSocket.send(JSON.stringify({
+        type: 'stop'
+      }))
     })
 
     socket.on('error', (error) => {
-      console.log('123')
-      startServer()
+      setTimeout(() => {
+        startFrontServer()
+      }, 500)
     })
   })
 }
 
-function emitMsg(msg) {
-  gatherSocket?.send(msg)
+function emitAudio(audio) {
+  gatherSocket?.send(audio)
 }
 
 function createWindow() {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    width: 500,
-    height: 300,
-    // width: 1024,
-    // height: 768,
+  global.mainWindow = new BrowserWindow({
+    height: 0,
+    width: 600,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     },
@@ -62,15 +92,15 @@ function createWindow() {
     resizable: false,
   })
 
-  ipcMain.on('sendMsg', (event, msg) => {
-    emitMsg(msg)
+  ipcMain.on('sendAudio', (event, audio) => {
+    emitAudio(audio)
   })
 
   // and load the index.html of the app.
-  mainWindow.loadFile('index.html')
+  global.mainWindow.loadFile('index.html')
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  // global.mainWindow.webContents.openDevTools()
 
   expressApp.listen('11111', () => {
   })
@@ -82,7 +112,9 @@ function createWindow() {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   createWindow()
-  startServer()
+
+  startFrontServer()
+  startSocket()
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
