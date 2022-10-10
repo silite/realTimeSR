@@ -29,7 +29,7 @@
   "dependencies": {
     "body-parser": "^1.20.0",
     "electron-squirrel-startup": "^1.0.0",
-    "express": "^4.18.1",
+    "express": "^4.18.2",
     "npm": "^8.19.2",
     "reconnecting-websocket": "^4.4.0",
     "run": "^1.4.0",
