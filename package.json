@@ -34,7 +34,7 @@
     "reconnecting-websocket": "^4.4.0",
     "run": "^1.4.0",
     "start": "^5.1.0",
-    "tencentcloud-sdk-nodejs": "^4.0.454",
+    "tencentcloud-sdk-nodejs": "^4.0.459",
     "ws": "^8.9.0"
   },
   "config": {
