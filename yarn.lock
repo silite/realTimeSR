@@ -4050,10 +4050,10 @@ temp@^0.9.0:
     mkdirp "^0.5.1"
     rimraf "~2.6.2"
 
-tencentcloud-sdk-nodejs@^4.0.454:
-  version "4.0.454"
-  resolved "https://registry.yarnpkg.com/tencentcloud-sdk-nodejs/-/tencentcloud-sdk-nodejs-4.0.454.tgz#55f308eeadd12fcf070c4c5ff5e0651a03893f43"
-  integrity sha512-S682EM1Qz5r40Zg/KGlz1g6F2KOl6VE81CltTLWvkgfC8/NtZFX+Z+q22Tw++KoVZRCrP0YwolCsPUx7lvoh8Q==
+tencentcloud-sdk-nodejs@^4.0.527:
+  version "4.0.527"
+  resolved "https://registry.yarnpkg.com/tencentcloud-sdk-nodejs/-/tencentcloud-sdk-nodejs-4.0.527.tgz#774b7f7a21f49c969f2b7583a18e07db4201b4c9"
+  integrity sha512-5sTbn4s1ZIvFC3b8MtoWIIeCUd0reSg6nlh6S5kvf6mEK9hIeAyJ0SXRDTbPoFh5Ps7pExSxejDtvDlnFn1XOQ==
   dependencies:
     form-data "^3.0.0"
     get-stream "^6.0.0"
